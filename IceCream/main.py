@@ -38,7 +38,7 @@ with open(argv[1]) as f:
             customers = []
             for _ in range(num_customers):
                 customers.append(Customer(f.readline()))
-            wants = {p:Flavor() for p in range(flavors)}
+            wants = {p : Flavor() for p in range(flavors)}
             for customer in customers:
                 for flavor, way in customer.likes.items():
                     wants[flavor].add(int(way))
