@@ -1,2 +1,2 @@
-py main.py input.txt
+python main.py B-large-practice.in
 PAUSE
