@@ -1,4 +1,3 @@
-from pprint import pprint
 from sys import argv
 from collections import Counter
 ONE = "1"
@@ -70,4 +69,3 @@ with open(argv[1]) as f:
                 result = test(customers, currlist)
             if result == WORKS:
                 w.write("Case #{}: {}\n".format(i + 1, " ".join((str(l) for l in currlist))))
-                print("Did number {}".format(i+1))
