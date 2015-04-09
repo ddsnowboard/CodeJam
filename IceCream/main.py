@@ -2,6 +2,8 @@ from pprint import pprint
 from sys import argv
 from collections import Counter
 ONE = "1"
+WORKS = "works"
+CONTINUE = "cont"
 class Customer:
     def __init__(self, list):
         self.original_list = list
@@ -16,6 +18,8 @@ class Customer:
             if self.likes.get(i, -1) == j:
                 return True
         return False
+    def malted_wants(self):
+        return [i for i, j in self.likes.items() if j == 1]
 class Flavor:
     def __init__(self):
         self.wants = Counter()
@@ -28,27 +32,42 @@ class Flavor:
 def test(customers, list):
     for i in customers:
         if not i.test(list):
-            return False
-    return True
+            return i
+    return WORKS
 with open(argv[1]) as f:
     with open("output.txt", 'w') as w:
         for i in range(int(f.readline())):
             flavors = int(f.readline())
             num_customers = int(f.readline())
             customers = []
+            starting_list = [0] * flavors
             for _ in range(num_customers):
                 customers.append(Customer(f.readline()))
             wants = {p : Flavor() for p in range(flavors)}
             for customer in customers:
                 for flavor, way in customer.likes.items():
                     wants[flavor].add(int(way))
-            worked = False
-            for curr in range(2**flavors):
-                currlist = [int(bool(curr & 2**p)) for p in range(flavors)]
-                if test(customers, currlist):
-                    w.write("Case #{}: {}\n".format(i + 1, " ".join((str(q) for q in currlist))))
-                    worked = True
-                    break
-            if not worked:
-                w.write("Case #{}: IMPOSSIBLE\n".format(i + 1))
-            print("Did one")
+            currlist = starting_list
+            result = test(customers, currlist)
+            while result != WORKS and result != CONTINUE:
+                desires = result.malted_wants()
+                counter = 0
+                this_try = currlist
+                try:
+                    this_try[desires[counter]] = 1
+                except IndexError:
+                    w.write("Case #{}: IMPOSSIBLE\n".format(i + 1))
+                    result = CONTINUE
+                    continue
+                while test(customers, currlist) == result:
+                    if counter >= len(desires):
+                        w.write("Case #{}: IMPOSSIBLE\n".format(i + 1))
+                        continue
+                    counter += 1
+                    this_try = currlist
+                    this_try[desires[counter]] = 1
+                currlist = this_try
+                result = test(customers, currlist)
+            if result == WORKS:
+                w.write("Case #{}: {}\n".format(i + 1, " ".join((str(l) for l in currlist))))
+                print("Did number {}".format(i+1))
