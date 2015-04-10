@@ -21,34 +21,23 @@ class Customer:
         return False
     def malted_wants(self):
         return [i for i, j in self.likes.items() if j == 1]
-class Flavor:
-    def __init__(self):
-        self.wants = Counter()
-    def all_malted(self):
-        return self.wants[1] and not self.wants[0]
-    def all_unmalted(self):
-        return self.wants[0] and not self.wants[1]
-    def add(self, element):
-        self.wants.update([element])
 def test(customers, list):
-    for i in customers:
-        if not i.test(list):
-            return i
+    for customer in customers:
+        if not customer.test(list):
+            return customer
     return WORKS
 with open(argv[1]) as f:
     with open("output.txt", 'w') as w:
         for i in range(int(f.readline())):
-            flavors = int(f.readline())
+            num_flavors = int(f.readline())
             num_customers = int(f.readline())
             customers = []
-            starting_list = [0] * flavors
+            starting_list = [0] * num_flavors
             for _ in range(num_customers):
                 customers.append(Customer(f.readline()))
-            wants = {p : Flavor() for p in range(flavors)}
-            for customer in customers:
-                for flavor, way in customer.likes.items():
-                    wants[flavor].add(int(way))
             currlist = starting_list
+            # Result will either be WORKS, which indicates success, or a Customer object, which indicates failure, with the
+            # indicated customer being unhappy. 
             result = test(customers, currlist)
             while result != WORKS and result != CONTINUE:
                 desires = result.malted_wants()
@@ -61,9 +50,6 @@ with open(argv[1]) as f:
                     result = CONTINUE
                     continue
                 while test(customers, currlist) == result:
-                    if counter >= len(desires):
-                        w.write("Case #{}: IMPOSSIBLE\n".format(i + 1))
-                        continue
                     counter += 1
                     this_try = currlist
                     this_try[desires[counter]] = 1
