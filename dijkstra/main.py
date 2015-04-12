@@ -31,7 +31,7 @@ with open(argv[1]) as f:
             line = f.readline().strip() * repetitions
             # print(line)
             curr_idx = 1
-            curr_tgt = DESIRED_OUTPUT[0]
+            curr_tgt = 0
             found = True
             _ = 0
             while True:
@@ -39,23 +39,25 @@ with open(argv[1]) as f:
                 if _ == 100:
                     _ = 0
                     print(curr_idx)
+                print(line[:curr_idx])
+                # print("Inputting {}: recieved {}".format(line[:curr_idx], reduce(quaternion, line[:curr_idx])))
                 if curr_tgt == len(DESIRED_OUTPUT):
                     found = True
                     break
-                if curr_idx == 1 and line[0] == curr_tgt:
+                if curr_idx == 1 and line[0] == DESIRED_OUTPUT[curr_tgt]:
                     line = line[1:]
                     curr_idx = 1
                     try:
-                        curr_tgt = DESIRED_OUTPUT[DESIRED_OUTPUT.index(curr_tgt)+1]
+                        curr_tgt += 1
                     except IndexError:
                         found = False
                         break
                 elif curr_idx == 1:
                     curr_idx += 1
                     continue
-                elif reduce(quaternion, line[:curr_idx], line[0]) == curr_tgt:
+                elif reduce(quaternion, line[:curr_idx]) == DESIRED_OUTPUT[curr_tgt]:
                     line = line[curr_idx:]
-                    curr_tgt = DESIRED_OUTPUT[DESIRED_OUTPUT.index(curr_tgt)+1]
+                    curr_tgt += 1
                     curr_idx = 1
                 else:
                     if curr_idx >= len(line) - 2:
